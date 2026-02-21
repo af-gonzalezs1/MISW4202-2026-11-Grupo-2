@@ -1,0 +1,50 @@
+services:
+  localstack:
+    image: localstack/localstack:3
+    environment:
+      - SERVICES=sqs
+      - DEBUG=1
+      - AWS_DEFAULT_REGION=us-east-1
+    ports:
+      - "4566:4566"
+    volumes:
+      - ./localstack/init-queues.sh:/etc/localstack/init/ready.d/init-queues.sh
+
+  postgres:
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=eda
+      - POSTGRES_PASSWORD=eda
+      - POSTGRES_DB=eda
+    ports:
+      - "5432:5432"
+
+  reservas:
+    build: ./reservas
+    environment:
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - SQS_ENDPOINT=http://localstack:4566
+      - QUEUE_NAME=pagos-queue
+      - DATABASE_URL=postgresql://eda:eda@postgres:5432/eda
+    ports:
+      - "5001:5000"
+    depends_on:
+      - localstack
+      - postgres
+
+  pagos:
+    build: ./pagos
+    environment:
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - SQS_ENDPOINT=http://localstack:4566
+      - QUEUE_NAME=pagos-queue
+      - DATABASE_URL=postgresql://eda:eda@postgres:5432/eda
+    ports:
+      - "5002:5000"
+    depends_on:
+      - localstack
+      - postgres
