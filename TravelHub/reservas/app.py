@@ -83,6 +83,7 @@ def obtener_reserva(reserva_id):
     with db() as conn, conn.cursor() as cur:
         cur.execute("SELECT id, cliente, monto, estado FROM reservas WHERE id=%s", (reserva_id,))
         row = cur.fetchone()
+
         if not row:
             return {"error": "No existe"}, 404
 
@@ -91,7 +92,7 @@ def obtener_reserva(reserva_id):
             "cliente": row[1],
             "monto": float(row[2]),
             "estado": row[3]
-        }
+        }, 200
 
 if __name__ == "__main__":
     ensure_tables()
