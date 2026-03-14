@@ -28,6 +28,9 @@ services:
       - SQS_ENDPOINT=http://localstack:4566
       - QUEUE_NAME=pagos-queue
       - DATABASE_URL=postgresql://eda:eda@postgres:5432/eda
+      - JWT_SECRET_KEY=change-this-jwt-secret
+      - REQUEST_SIGNING_KEY=TamperingDetectadoPapito_01
+      - EXPORTS_ENCRYPTION_KEY=9hH6jlGc6Qf7udOKnyYP9lM6i1-xW1GryuVQWp6nBBM=
     ports:
       - "5001:5000"
     depends_on:
